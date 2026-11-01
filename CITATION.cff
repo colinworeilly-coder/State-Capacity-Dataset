@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use these data, please cite the article below and the V-Dem dataset release matching the vintage you use."
+title: "Index of State Capacity"
+type: dataset
+authors:
+  - family-names: "O'Reilly"
+    given-names: "Colin"
+  - family-names: "Murphy"
+    given-names: "Ryan H."
+license: CC-BY-SA-4.0
+repository-code: "https://github.com/colinworeilly-coder/State-Capacity-Dataset"
+url: "https://www.colinworeilly.com"
+keywords:
+  - state capacity
+  - V-Dem
+  - institutions
+  - panel data
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "O'Reilly"
+      given-names: "Colin"
+    - family-names: "Murphy"
+      given-names: "Ryan H."
+  title: "An Index Measuring State Capacity, 1789–2018"
+  journal: "Economica"
+  volume: 89
+  issue: 355
+  start: 713
+  end: 745
+  year: 2022
+  doi: "10.1111/ecca.12411"
+references:
+  - type: dataset
+    title: "V-Dem Country-Year Dataset"
+    authors:
+      - family-names: "Coppedge"
+        given-names: "Michael"
+      - name: "et al."
+    publisher:
+      name: "Varieties of Democracy (V-Dem) Project"
+    license: CC-BY-SA-4.0
