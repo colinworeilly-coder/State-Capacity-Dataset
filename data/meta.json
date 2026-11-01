@@ -1,0 +1,279 @@
+{
+ "vintages": [
+  {
+   "key": "v14",
+   "vdem": 14,
+   "label": "Latest (V-Dem v14, data to 2023)",
+   "short": "Latest \u00b7 V-Dem v14",
+   "file": "statecap_vdem_v14",
+   "sizes": {
+    "csv": 2616584,
+    "dta": 3949717,
+    "xlsx": 1878092
+   },
+   "cite": {
+    "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2024. \u201cV-Dem [Country-Year/Country-Date] Dataset v14.\u201d Varieties of Democracy (V-Dem) Project.",
+    "doi": "https://doi.org/10.23696/mcwt-fr58"
+   },
+   "summary": {
+    "c_nar": {
+     "N": 19436,
+     "n": 195,
+     "T": 99.7,
+     "mean": 0.0,
+     "sd": 1.648,
+     "sd_between": 1.311,
+     "sd_within": 0.862,
+     "min": -4.393,
+     "max": 3.509,
+     "first_year": 1789,
+     "last_year": 2023
+    },
+    "c_fisc": {
+     "N": 18939,
+     "n": 193,
+     "T": 98.1,
+     "mean": 0.0,
+     "sd": 1.772,
+     "sd_between": 1.407,
+     "sd_within": 0.947,
+     "min": -5.162,
+     "max": 3.97,
+     "first_year": 1789,
+     "last_year": 2023
+    },
+    "c_comp": {
+     "N": 13441,
+     "n": 175,
+     "T": 76.8,
+     "mean": 0.0,
+     "sd": 1.952,
+     "sd_between": 1.658,
+     "sd_within": 0.895,
+     "min": -5.823,
+     "max": 4.286,
+     "first_year": 1900,
+     "last_year": 2023
+    }
+   }
+  },
+  {
+   "key": "v9",
+   "vdem": 9,
+   "label": "Original (Economica 2022, V-Dem v9)",
+   "short": "Original \u00b7 V-Dem v9",
+   "file": "statecap_original_vdem_v9",
+   "sizes": {
+    "csv": 2027028,
+    "dta": 2853963,
+    "xlsx": 1410150
+   },
+   "cite": {
+    "text": "Coppedge, Michael, John Gerring, Staffan I. Lindberg, Svend-Erik Skaaning, Jan Teorell, et al. 2019. \u201cV-Dem [Country-Year/Country-Date] Dataset v9.\u201d Varieties of Democracy (V-Dem) Project.",
+    "doi": "https://doi.org/10.23696/vdemcy19"
+   },
+   "summary": {
+    "c_nar": {
+     "N": 18248,
+     "n": 194,
+     "T": 94.1,
+     "mean": -0.0,
+     "sd": 1.649,
+     "sd_between": 1.316,
+     "sd_within": 0.855,
+     "min": -4.459,
+     "max": 3.536,
+     "first_year": 1789,
+     "last_year": 2018
+    },
+    "c_fisc": {
+     "N": 17307,
+     "n": 192,
+     "T": 90.1,
+     "mean": -0.0,
+     "sd": 1.752,
+     "sd_between": 1.423,
+     "sd_within": 0.921,
+     "min": -4.982,
+     "max": 3.922,
+     "first_year": 1789,
+     "last_year": 2018
+    },
+    "c_comp": {
+     "N": 12127,
+     "n": 175,
+     "T": 69.3,
+     "mean": 0.0,
+     "sd": 1.94,
+     "sd_between": 1.663,
+     "sd_within": 0.878,
+     "min": -5.663,
+     "max": 4.214,
+     "first_year": 1900,
+     "last_year": 2018
+    }
+   }
+  }
+ ],
+ "archive": [
+  {
+   "vdem": 12,
+   "file": "archive/statecap_vdem_v12",
+   "sizes": {
+    "csv": 2562799,
+    "dta": 3899449,
+    "xlsx": 1818352
+   },
+   "cite": {
+    "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2022. \u201cV-Dem [Country-Year/Country-Date] Dataset v12.\u201d Varieties of Democracy (V-Dem) Project.",
+    "doi": "https://doi.org/10.23696/vdemds22"
+   }
+  }
+ ],
+ "loadings": {
+  "c_nar": {
+   "inputs": [
+    "v2x_rule",
+    "v2svstterr",
+    "v2clrspct",
+    "v2dlencmps"
+   ],
+   "loadings": [
+    0.555788,
+    0.386763,
+    0.549989,
+    0.488903
+   ],
+   "v9_mean": [
+    0.5056184239368697,
+    88.63113524769837,
+    0.01646695528277069,
+    -0.02562516440157829
+   ],
+   "v9_sd": [
+    0.3095451481162377,
+    14.459837132575105,
+    1.476357289655382,
+    1.5020270642734304
+   ],
+   "eigen": 2.7192,
+   "share": 0.6798,
+   "n": 18248
+  },
+  "c_fisc": {
+   "inputs": [
+    "v2x_rule",
+    "v2svstterr",
+    "v2clrspct",
+    "v2dlencmps",
+    "v2stfisccap"
+   ],
+   "loadings": [
+    0.518025,
+    0.358135,
+    0.512148,
+    0.433611,
+    0.39125
+   ],
+   "v9_mean": [
+    0.4964409198590165,
+    88.39145952504767,
+    -0.021214999711099563,
+    -0.0663705437106373,
+    0.3873351245160917
+   ],
+   "v9_sd": [
+    0.3082446007138007,
+    14.615288685744154,
+    1.4717656892381377,
+    1.5023693040123958,
+    1.1706763953363954
+   ],
+   "eigen": 3.0681,
+   "share": 0.6136,
+   "n": 17307
+  },
+  "c_comp": {
+   "inputs": [
+    "v2x_rule",
+    "v2svstterr",
+    "v2clrspct",
+    "v2dlencmps",
+    "v2stfisccap",
+    "v2peedueq"
+   ],
+   "loadings": [
+    0.463074,
+    0.31659,
+    0.46086,
+    0.412545,
+    0.37124,
+    0.406115
+   ],
+   "v9_mean": [
+    0.5087830460954894,
+    90.38543481487591,
+    0.08795769769934857,
+    0.28995613094747263,
+    0.5012781396882988,
+    0.04012764904757972
+   ],
+   "v9_sd": [
+    0.31080302134372456,
+    11.62697067359833,
+    1.4954238855592579,
+    1.3644093147648881,
+    1.1853730908768203,
+    1.567054619386888
+   ],
+   "eigen": 3.7646,
+   "share": 0.6274,
+   "n": 12127
+  }
+ },
+ "inputs": {
+  "v2x_rule": {
+   "name": "Rule of law",
+   "question": "To what extent are laws transparently, independently, predictably, impartially and equally enforced, and to what extent do the actions of government officials comply with the law?"
+  },
+  "v2svstterr": {
+   "name": "State authority over territory",
+   "question": "Over what percentage of the territory does the state have effective control?"
+  },
+  "v2clrspct": {
+   "name": "Rigorous and impartial public administration",
+   "question": "Are public officials rigorous and impartial in the performance of their duties?"
+  },
+  "v2dlencmps": {
+   "name": "Particularistic or public goods",
+   "question": "Considering the profile of social and infrastructural spending in the national budget, how 'particularistic' or 'public goods' are most expenditures?"
+  },
+  "v2stfisccap": {
+   "name": "State fiscal source of revenue",
+   "question": "On which of the following sources of revenue does the central government primarily rely to finance its activities?"
+  },
+  "v2peedueq": {
+   "name": "Educational equality",
+   "question": "To what extent is high-quality basic education guaranteed to all, sufficient to enable them to exercise their basic rights as adult citizens?"
+  }
+ },
+ "labels": {
+  "country_name": "Country name (V-Dem)",
+  "country_text_id": "Country code (V-Dem; ISO 3166-1 alpha-3 where one exists)",
+  "country_id": "V-Dem country ID",
+  "iso3": "ISO 3166-1 alpha-3 (blank for historical polities)",
+  "year": "Year",
+  "c_nar": "State capacity: narrow index (4 inputs)",
+  "c_fisc": "State capacity: narrow index with fiscal capacity (5 inputs)",
+  "c_comp": "State capacity: comprehensive index (6 inputs)",
+  "pca_nar": "Robustness: narrow index, PCA re-estimated on this vintage",
+  "pca_fisc": "Robustness: narrow+fiscal index, PCA re-estimated on this vintage",
+  "pca_comp": "Robustness: comprehensive index, PCA re-estimated on this vintage",
+  "v2x_rule": "V-Dem: Rule of law index (v2x_rule)",
+  "v2svstterr": "V-Dem: State authority over territory, % (v2svstterr)",
+  "v2clrspct": "V-Dem: Rigorous and impartial public administration (v2clrspct)",
+  "v2dlencmps": "V-Dem: Particularistic or public goods (v2dlencmps)",
+  "v2stfisccap": "V-Dem: State fiscal source of revenue (v2stfisccap)",
+  "v2peedueq": "V-Dem: Educational equality (v2peedueq)"
+ }
+}
