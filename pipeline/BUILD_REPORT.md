@@ -12,14 +12,15 @@
 
 - **V-Dem v12**: 27,380 rows, 1789-2021. Reproduces the released update file: max abs. diff. c_nar 2.6e-07, c_fisc 3.4e-07, c_comp 3.3e-07. Correlation with original on overlapping years: c_nar 0.994, c_fisc 0.991, c_comp 0.993.
 - **V-Dem v14**: 27,734 rows, 1789-2023. Reproduces the released update file: max abs. diff. c_nar 3.1e-07, c_fisc 2.6e-07, c_comp 2.9e-07. Correlation with original on overlapping years: c_nar 0.991, c_fisc 0.988, c_comp 0.990.
+- **V-Dem v16**: 28,092 rows, 1789-2025. Correlation with original on overlapping years: c_nar 0.991, c_fisc 0.987, c_comp 0.990.
 
 ## 3. Summary statistics (compare Table 3)
 
 | Vintage | Index | N | n | T̄ | SD | SD between | SD within | Min | Max | Years |
 |---|---|---|---|---|---|---|---|---|---|---|
-| v14 | c_nar | 19,436 | 195 | 99.7 | 1.648 | 1.311 | 0.862 | -4.393 | 3.509 | 1789-2023 |
-| v14 | c_fisc | 18,939 | 193 | 98.1 | 1.772 | 1.407 | 0.947 | -5.162 | 3.97 | 1789-2023 |
-| v14 | c_comp | 13,441 | 175 | 76.8 | 1.952 | 1.658 | 0.895 | -5.823 | 4.286 | 1900-2023 |
+| v16 | c_nar | 19,784 | 195 | 101.5 | 1.646 | 1.307 | 0.866 | -4.416 | 3.511 | 1789-2025 |
+| v16 | c_fisc | 19,291 | 193 | 100.0 | 1.77 | 1.404 | 0.95 | -5.2 | 3.912 | 1789-2025 |
+| v16 | c_comp | 13,793 | 175 | 78.8 | 1.951 | 1.659 | 0.896 | -5.815 | 4.313 | 1900-2025 |
 | v9 | c_nar | 18,248 | 194 | 94.1 | 1.649 | 1.316 | 0.855 | -4.459 | 3.536 | 1789-2018 |
 | v9 | c_fisc | 17,307 | 192 | 90.1 | 1.752 | 1.423 | 0.921 | -4.982 | 3.922 | 1789-2018 |
 | v9 | c_comp | 12,127 | 175 | 69.3 | 1.94 | 1.663 | 0.878 | -5.663 | 4.214 | 1900-2018 |

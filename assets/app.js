@@ -639,7 +639,7 @@
     const s = latest.summary;
     if (latest.key !== 'v9') {
       box.append(dlCard('Latest', latest.label,
-        `${s.c_nar.first_year}–${s.c_nar.last_year}. Fixed loadings from the paper applied to V-Dem v${latest.vdem}. Includes re-estimated pca_* columns for robustness.`,
+        `${s.c_nar.first_year}–${s.c_nar.last_year}. Fixed loadings from the paper applied to V-Dem v${latest.vdem}. Includes re-estimated pca_* columns for robustness.${latest.note ? ' ' + latest.note : ''}`,
         latest.file, latest.sizes));
     }
     const so = original.summary;
@@ -648,7 +648,7 @@
       original.file, original.sizes));
     for (const a of state.meta.archive.slice().reverse()) {
       box.append(dlCard('Archive', `Earlier update (V-Dem v${a.vdem})`,
-        'Previously released update, kept so earlier work can be reproduced exactly.', a.file, a.sizes));
+        'Previously released update, kept so earlier work can be reproduced exactly.' + (a.note ? ' ' + a.note : ''), a.file, a.sizes));
     }
     const tb = $('#codebook tbody');
     for (const [k, v] of Object.entries(state.meta.labels)) {
@@ -697,6 +697,11 @@
           stt.tBodies[0].append(r);
         }
       }
+      const notes = $('#vintage-notes');
+      for (const v of [...state.meta.vintages, ...state.meta.archive]) {
+        if (v.note) notes.append(el('li', {}, `V-Dem v${v.vdem}: ${v.note}`));
+      }
+      notes.hidden = !notes.childElementCount;
       const ul = $('#vdem-cites');
       const all = [...state.meta.vintages.map((v) => ({ vdem: v.vdem, cite: v.cite, label: v.short })),
         ...state.meta.archive.map((a) => ({ vdem: a.vdem, cite: a.cite, label: `Archive · V-Dem v${a.vdem}` }))]

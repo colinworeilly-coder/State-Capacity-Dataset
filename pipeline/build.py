@@ -92,6 +92,20 @@ VDEM_CITATION = {
     14: ("Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2024. "
          "\u201cV-Dem [Country-Year/Country-Date] Dataset v14.\u201d Varieties of Democracy (V-Dem) Project.",
          "https://doi.org/10.23696/mcwt-fr58"),
+    16: ("Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2026. "
+         "\u201cV-Dem [Country-Year/Country-Date] Dataset v16.\u201d Varieties of Democracy (V-Dem) Project.",
+         "https://doi.org/10.23696/vdemds26"),
+}
+
+
+# Release-specific caveats from V-Dem's cautionary notes that touch the six inputs.
+VINTAGE_NOTES = {
+    14: ("V-Dem's v14 notes report test ratings included by mistake for Afghanistan, Burundi, Comoros, Iraq, Lebanon, "
+         "North Macedonia, Uruguay and Zimbabwe around 1900, 1925, 1950, 1975 and 2000. v16 corrects this, and these "
+         "country-years account for the largest v14-to-v16 revisions."),
+    16: ("V-Dem's v16 cautionary notes flag convergence issues in the measurement model for two inputs: public goods "
+         "(v2dlencmps) and educational equality (v2peedueq). On the same country-years, their v16 values correlate 0.997 "
+         "with v14, and the index correlates 0.999 with v14."),
 }
 
 
@@ -309,11 +323,12 @@ def cmd_build(a):
             yr = int(d.dropna(subset=["c_nar"]).year.max())
             vintages.insert(0, {"key": f"v{ver}", "vdem": ver,
                                 "label": f"Latest (V-Dem v{ver}, data to {yr})", "short": f"Latest · V-Dem v{ver}",
-                                "file": stem, "sizes": sizes(stem), "cite": vdem_cite(ver),
+                                "file": stem, "sizes": sizes(stem), "cite": vdem_cite(ver), "note": VINTAGE_NOTES.get(ver, ""),
                                 "summary": {k: summary(d, k) for k in INDEX}})
             web_json(d, f"v{ver}", vintages[0]["label"])
         else:
-            archive.append({"vdem": ver, "file": f"archive/{stem}", "sizes": sizes(f"archive/{stem}"), "cite": vdem_cite(ver)})
+            archive.append({"vdem": ver, "file": f"archive/{stem}", "sizes": sizes(f"archive/{stem}"), "cite": vdem_cite(ver),
+                            "note": VINTAGE_NOTES.get(ver, "")})
     report.append("")
 
     meta = {"vintages": vintages, "archive": archive,

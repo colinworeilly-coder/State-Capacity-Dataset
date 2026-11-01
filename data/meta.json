@@ -1,59 +1,60 @@
 {
  "vintages": [
   {
-   "key": "v14",
-   "vdem": 14,
-   "label": "Latest (V-Dem v14, data to 2023)",
-   "short": "Latest \u00b7 V-Dem v14",
-   "file": "statecap_vdem_v14",
+   "key": "v16",
+   "vdem": 16,
+   "label": "Latest (V-Dem v16, data to 2025)",
+   "short": "Latest \u00b7 V-Dem v16",
+   "file": "statecap_vdem_v16",
    "sizes": {
-    "csv": 2616584,
-    "dta": 3949717,
-    "xlsx": 1878092
+    "csv": 2658232,
+    "dta": 4000553,
+    "xlsx": 1926254
    },
    "cite": {
-    "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2024. \u201cV-Dem [Country-Year/Country-Date] Dataset v14.\u201d Varieties of Democracy (V-Dem) Project.",
-    "doi": "https://doi.org/10.23696/mcwt-fr58"
+    "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2026. \u201cV-Dem [Country-Year/Country-Date] Dataset v16.\u201d Varieties of Democracy (V-Dem) Project.",
+    "doi": "https://doi.org/10.23696/vdemds26"
    },
+   "note": "V-Dem's v16 cautionary notes flag convergence issues in the measurement model for two inputs: public goods (v2dlencmps) and educational equality (v2peedueq). On the same country-years, their v16 values correlate 0.997 with v14, and the index correlates 0.999 with v14.",
    "summary": {
     "c_nar": {
-     "N": 19436,
+     "N": 19784,
      "n": 195,
-     "T": 99.7,
-     "mean": 0.0,
-     "sd": 1.648,
-     "sd_between": 1.311,
-     "sd_within": 0.862,
-     "min": -4.393,
-     "max": 3.509,
+     "T": 101.5,
+     "mean": -0.0,
+     "sd": 1.646,
+     "sd_between": 1.307,
+     "sd_within": 0.866,
+     "min": -4.416,
+     "max": 3.511,
      "first_year": 1789,
-     "last_year": 2023
+     "last_year": 2025
     },
     "c_fisc": {
-     "N": 18939,
+     "N": 19291,
      "n": 193,
-     "T": 98.1,
+     "T": 100.0,
      "mean": 0.0,
-     "sd": 1.772,
-     "sd_between": 1.407,
-     "sd_within": 0.947,
-     "min": -5.162,
-     "max": 3.97,
+     "sd": 1.77,
+     "sd_between": 1.404,
+     "sd_within": 0.95,
+     "min": -5.2,
+     "max": 3.912,
      "first_year": 1789,
-     "last_year": 2023
+     "last_year": 2025
     },
     "c_comp": {
-     "N": 13441,
+     "N": 13793,
      "n": 175,
-     "T": 76.8,
-     "mean": 0.0,
-     "sd": 1.952,
-     "sd_between": 1.658,
-     "sd_within": 0.895,
-     "min": -5.823,
-     "max": 4.286,
+     "T": 78.8,
+     "mean": -0.0,
+     "sd": 1.951,
+     "sd_between": 1.659,
+     "sd_within": 0.896,
+     "min": -5.815,
+     "max": 4.313,
      "first_year": 1900,
-     "last_year": 2023
+     "last_year": 2025
     }
    }
   },
@@ -66,7 +67,7 @@
    "sizes": {
     "csv": 2027028,
     "dta": 2853963,
-    "xlsx": 1410150
+    "xlsx": 1410151
    },
    "cite": {
     "text": "Coppedge, Michael, John Gerring, Staffan I. Lindberg, Svend-Erik Skaaning, Jan Teorell, et al. 2019. \u201cV-Dem [Country-Year/Country-Date] Dataset v9.\u201d Varieties of Democracy (V-Dem) Project.",
@@ -122,12 +123,27 @@
    "sizes": {
     "csv": 2562799,
     "dta": 3899449,
-    "xlsx": 1818352
+    "xlsx": 1818353
    },
    "cite": {
     "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2022. \u201cV-Dem [Country-Year/Country-Date] Dataset v12.\u201d Varieties of Democracy (V-Dem) Project.",
     "doi": "https://doi.org/10.23696/vdemds22"
-   }
+   },
+   "note": ""
+  },
+  {
+   "vdem": 14,
+   "file": "archive/statecap_vdem_v14",
+   "sizes": {
+    "csv": 2616584,
+    "dta": 3949717,
+    "xlsx": 1878092
+   },
+   "cite": {
+    "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2024. \u201cV-Dem [Country-Year/Country-Date] Dataset v14.\u201d Varieties of Democracy (V-Dem) Project.",
+    "doi": "https://doi.org/10.23696/mcwt-fr58"
+   },
+   "note": "V-Dem's v14 notes report test ratings included by mistake for Afghanistan, Burundi, Comoros, Iraq, Lebanon, North Macedonia, Uruguay and Zimbabwe around 1900, 1925, 1950, 1975 and 2000. v16 corrects this, and these country-years account for the largest v14-to-v16 revisions."
   }
  ],
  "loadings": {
