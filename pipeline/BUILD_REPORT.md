@@ -14,7 +14,12 @@
 - **V-Dem v14**: 27,734 rows, 1789-2023. Reproduces the released update file: max abs. diff. c_nar 3.1e-07, c_fisc 2.6e-07, c_comp 2.9e-07. Correlation with original on overlapping years: c_nar 0.991, c_fisc 0.988, c_comp 0.990.
 - **V-Dem v16**: 28,092 rows, 1789-2025. Correlation with original on overlapping years: c_nar 0.991, c_fisc 0.987, c_comp 0.990.
 
-## 3. Summary statistics (compare Table 3)
+## 3. Alternative assumptions (dashboard toggles; official files unchanged)
+
+- **hkg_territory100 (v9)**: 119 country-years, 1900-2018; c_nar in 2018 = 1.684, which would rank 47 of 175.
+- **hkg_territory100 (v16)**: 126 country-years, 1900-2025; c_nar in 2025 = 0.850, which would rank 71 of 175.
+
+## 4. Summary statistics (compare Table 3)
 
 | Vintage | Index | N | n | T̄ | SD | SD between | SD within | Min | Max | Years |
 |---|---|---|---|---|---|---|---|---|---|---|

@@ -9,7 +9,7 @@
    "sizes": {
     "csv": 2658232,
     "dta": 4000553,
-    "xlsx": 1926254
+    "xlsx": 1926253
    },
    "cite": {
     "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2026. \u201cV-Dem [Country-Year/Country-Date] Dataset v16.\u201d Varieties of Democracy (V-Dem) Project.",
@@ -56,6 +56,12 @@
      "first_year": 1900,
      "last_year": 2025
     }
+   },
+   "scenarios": {
+    "hkg_territory100": {
+     "file": "scenarios/hkg_territory100_v16",
+     "size": 11176
+    }
    }
   },
   {
@@ -67,7 +73,7 @@
    "sizes": {
     "csv": 2027028,
     "dta": 2853963,
-    "xlsx": 1410151
+    "xlsx": 1410150
    },
    "cite": {
     "text": "Coppedge, Michael, John Gerring, Staffan I. Lindberg, Svend-Erik Skaaning, Jan Teorell, et al. 2019. \u201cV-Dem [Country-Year/Country-Date] Dataset v9.\u201d Varieties of Democracy (V-Dem) Project.",
@@ -113,6 +119,12 @@
      "first_year": 1900,
      "last_year": 2018
     }
+   },
+   "scenarios": {
+    "hkg_territory100": {
+     "file": "scenarios/hkg_territory100_v9",
+     "size": 10565
+    }
    }
   }
  ],
@@ -123,7 +135,7 @@
    "sizes": {
     "csv": 2562799,
     "dta": 3899449,
-    "xlsx": 1818353
+    "xlsx": 1818352
    },
    "cite": {
     "text": "Coppedge, Michael, John Gerring, Carl Henrik Knutsen, Staffan I. Lindberg, Jan Teorell, et al. 2022. \u201cV-Dem [Country-Year/Country-Date] Dataset v12.\u201d Varieties of Democracy (V-Dem) Project.",
@@ -144,6 +156,17 @@
     "doi": "https://doi.org/10.23696/mcwt-fr58"
    },
    "note": "V-Dem's v14 notes report test ratings included by mistake for Afghanistan, Burundi, Comoros, Iraq, Lebanon, North Macedonia, Uruguay and Zimbabwe around 1900, 1925, 1950, 1975 and 2000. v16 corrects this, and these country-years account for the largest v14-to-v16 revisions."
+  }
+ ],
+ "scenarios": [
+  {
+   "key": "hkg_territory100",
+   "code": "HKG",
+   "var": "v2svstterr",
+   "value": 100.0,
+   "label": "Hong Kong: assume full state authority over territory",
+   "short": "Hong Kong at 100% territorial control",
+   "description": "V-Dem does not code state authority over territory (v2svstterr) for Hong Kong, so Hong Kong has no index score. This assumption sets v2svstterr to 100% in every year in which Hong Kong's other inputs are observed. Hong Kong is scored with the same standardisation constants as the baseline, so no other country's score changes."
   }
  ],
  "loadings": {
@@ -290,6 +313,7 @@
   "v2clrspct": "V-Dem: Rigorous and impartial public administration (v2clrspct)",
   "v2dlencmps": "V-Dem: Particularistic or public goods (v2dlencmps)",
   "v2stfisccap": "V-Dem: State fiscal source of revenue (v2stfisccap)",
-  "v2peedueq": "V-Dem: Educational equality (v2peedueq)"
+  "v2peedueq": "V-Dem: Educational equality (v2peedueq)",
+  "v2svstterr_assumed": "Scenario files only: 1 = v2svstterr set by assumption, not taken from V-Dem"
  }
 }

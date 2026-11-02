@@ -71,6 +71,7 @@ LABELS = {
     "v2dlencmps": "V-Dem: Particularistic or public goods (v2dlencmps)",
     "v2stfisccap": "V-Dem: State fiscal source of revenue (v2stfisccap)",
     "v2peedueq": "V-Dem: Educational equality (v2peedueq)",
+    "v2svstterr_assumed": "Scenario files only: 1 = v2svstterr set by assumption, not taken from V-Dem",
 }
 INPUT_INFO = {
     "v2x_rule": ("Rule of law", "To what extent are laws transparently, independently, predictably, impartially and equally enforced, and to what extent do the actions of government officials comply with the law?"),
@@ -107,6 +108,20 @@ VINTAGE_NOTES = {
          "(v2dlencmps) and educational equality (v2peedueq). On the same country-years, their v16 values correlate 0.997 "
          "with v14, and the index correlates 0.999 with v14."),
 }
+
+
+# Alternative assumptions the dashboard can switch on. Each one sets one input
+# for one polity to a fixed value and scores that polity with the same
+# standardisation constants as the baseline, so no other country changes.
+SCENARIOS = [{
+    "key": "hkg_territory100", "code": "HKG", "var": "v2svstterr", "value": 100.0,
+    "label": "Hong Kong: assume full state authority over territory",
+    "short": "Hong Kong at 100% territorial control",
+    "description": ("V-Dem does not code state authority over territory (v2svstterr) for Hong Kong, so Hong Kong has no "
+                    "index score. This assumption sets v2svstterr to 100% in every year in which Hong Kong's other "
+                    "inputs are observed. Hong Kong is scored with the same standardisation constants as the baseline, "
+                    "so no other country's score changes."),
+}]
 
 
 def vdem_cite(ver):
@@ -208,8 +223,37 @@ def write_outputs(df, stem, title, cols):
             xw, sheet_name="codebook", index=False)
 
 
-def web_json(df, vintage_key, label):
-    """Compact per-country arrays for the dashboard."""
+def apply_scenario(d, sc, loadings, consts):
+    """Rows for the scenario polity with the assumed input, scored on the baseline constants."""
+    r = d[d.country_text_id == sc["code"]].copy()
+    r[sc["var"]] = sc["value"]
+    for k, cols in INDEX.items():
+        mu, sd = consts[k]
+        r[k] = score(r, cols, loadings[k], mu, sd)
+    r = r.dropna(subset=list(INDEX), how="all")
+    r[sc["var"] + "_assumed"] = 1
+    return r[IDS[:3] + ["iso3", "year"] + list(INDEX) + INPUTS + [sc["var"] + "_assumed"]]
+
+
+def write_scenarios(d, vkey, loadings, consts, report):
+    out = {}
+    (DL / "scenarios").mkdir(exist_ok=True)
+    for sc in SCENARIOS:
+        r = apply_scenario(d, sc, loadings, consts)
+        stem = f"scenarios/{sc['key']}_{vkey}"
+        r.to_csv(DL / f"{stem}.csv", index=False, float_format="%.6g")
+        last = int(r.year.max()) if len(r) else None
+        if len(r):
+            base = d[(d.year == last) & d.c_nar.notna() & (d.country_text_id != sc["code"])]
+            v = float(r.loc[r.year == last, "c_nar"].iloc[0])
+            rank = int((base.c_nar > v).sum()) + 1
+            report.append(f"- **{sc['key']} ({vkey})**: {len(r)} country-years, {int(r.year.min())}-{last}; "
+                          f"c_nar in {last} = {v:.3f}, which would rank {rank} of {len(base) + 1}.")
+        out[sc["key"]] = {"rows": r, "file": stem, "size": (DL / f"{stem}.csv").stat().st_size}
+    return out
+
+
+def records(df):
     keep = ["c_nar", "c_fisc", "c_comp"] + INPUTS
     d = df.dropna(subset=["c_nar", "c_fisc", "c_comp"], how="all")
     countries = []
@@ -224,7 +268,13 @@ def web_json(df, vintage_key, label):
             rec[k] = [None if pd.isna(v) else round(float(v), digs) for v in g[k].values]
         countries.append(rec)
     countries.sort(key=lambda r: r["name"])
-    out = {"vintage": vintage_key, "label": label, "countries": countries}
+    return countries
+
+
+def web_json(df, vintage_key, label, scen=None):
+    """Compact per-country arrays for the dashboard; scenario polities ride along separately."""
+    out = {"vintage": vintage_key, "label": label, "countries": records(df),
+           "scenarios": {k: records(v["rows"]) for k, v in (scen or {}).items()}}
     p = WEB / f"{vintage_key}.json"
     p.write_text(json.dumps(out, separators=(",", ":"), allow_nan=False))
     return p
@@ -281,7 +331,13 @@ def cmd_build(a):
     vintages = [{"key": "v9", "vdem": 9, "label": "Original (Economica 2022, V-Dem v9)", "short": "Original · V-Dem v9",
                  "file": "statecap_original_vdem_v9", "sizes": sizes("statecap_original_vdem_v9"),
                  "cite": vdem_cite(9), "summary": {k: summary(orig, k) for k in INDEX}}]
-    web_json(orig, "v9", vintages[0]["label"])
+    report += ["## Alternative assumptions", ""]
+    scen9 = write_scenarios(orig, "v9", {k: fixed[k]["loadings"] for k in INDEX},
+                            {k: (fixed[k]["mean"], fixed[k]["sd"]) for k in INDEX}, report)
+    vintages[0]["scenarios"] = {k: {"file": v["file"], "size": v["size"]} for k, v in scen9.items()}
+    web_json(orig, "v9", vintages[0]["label"], scen9)
+    scen_report = report[-len(SCENARIOS):]
+    del report[-(len(SCENARIOS) + 2):]
 
     # ---- 2. Updated vintages ---------------------------------------------- #
     for v in (12, 14):
@@ -293,9 +349,11 @@ def cmd_build(a):
         ver = int(f.stem.split("_")[1][1:])
         d = pd.read_csv(f)
         d["iso3"] = d.country_text_id.map(iso_lookup(sorted(set(d.country_text_id)))).fillna("")
+        consts = {}
         for k, cols in INDEX.items():
             s = d.dropna(subset=cols)
             mu, sd = s[cols].mean().values, s[cols].std(ddof=1).values
+            consts[k] = (mu, sd)
             d[k] = score(d, cols, fixed[k]["loadings"], mu, sd)
             p = pca_first(d, cols)
             d[k.replace("c_", "pca_")] = score(d, cols, p["loadings"], p["mean"], p["sd"])
@@ -325,17 +383,22 @@ def cmd_build(a):
                                 "label": f"Latest (V-Dem v{ver}, data to {yr})", "short": f"Latest · V-Dem v{ver}",
                                 "file": stem, "sizes": sizes(stem), "cite": vdem_cite(ver), "note": VINTAGE_NOTES.get(ver, ""),
                                 "summary": {k: summary(d, k) for k in INDEX}})
-            web_json(d, f"v{ver}", vintages[0]["label"])
+            scen = write_scenarios(d, f"v{ver}", {k: fixed[k]["loadings"] for k in INDEX}, consts, scen_report)
+            vintages[0]["scenarios"] = {k: {"file": v["file"], "size": v["size"]} for k, v in scen.items()}
+            web_json(d, f"v{ver}", vintages[0]["label"], scen)
         else:
             archive.append({"vdem": ver, "file": f"archive/{stem}", "sizes": sizes(f"archive/{stem}"), "cite": vdem_cite(ver),
                             "note": VINTAGE_NOTES.get(ver, "")})
     report.append("")
+    report += ["## 3. Alternative assumptions (dashboard toggles; official files unchanged)", ""] + scen_report + [""]
 
     meta = {"vintages": vintages, "archive": archive,
+            "scenarios": [{k: sc[k] for k in ("key", "code", "var", "value", "label", "short", "description")}
+                          for sc in SCENARIOS],
             "loadings": meta_load, "inputs": {k: {"name": n, "question": q} for k, (n, q) in INPUT_INFO.items()},
             "labels": LABELS}
     (WEB / "meta.json").write_text(json.dumps(meta, indent=1))
-    report += ["## 3. Summary statistics (compare Table 3)", "",
+    report += ["## 4. Summary statistics (compare Table 3)", "",
                "| Vintage | Index | N | n | T̄ | SD | SD between | SD within | Min | Max | Years |", "|---|---|---|---|---|---|---|---|---|---|---|"]
     for v in vintages:
         for k, s in v["summary"].items():

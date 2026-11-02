@@ -33,6 +33,15 @@ Then open <http://localhost:8000>. Opening `index.html` directly from disk will 
 
 GitHub Pages is free for public repositories. A private repository needs a paid GitHub plan.
 
+### Alternative assumptions
+
+The control bar has switches for alternative assumptions that fill gaps in the V-Dem data. Currently there is one. V-Dem does not code state authority over territory (`v2svstterr`) for **Hong Kong**, so Hong Kong has no index score. The switch scores Hong Kong with `v2svstterr` = 100% in every year where its other inputs exist: 1900–2025 on v16 and 1900–2018 on v9.
+- Hong Kong is scored with the same loadings and standardisation constants as everyone else, so no other country's score changes. Only the ranks below Hong Kong shift.
+- While the switch is on, Hong Kong is labelled "(assumed)" in every view.
+- The official download files never include assumed scores. Each assumption has its own file in `downloads/scenarios/`, with a `v2svstterr_assumed` flag.
+
+To add an assumption, add an entry to `SCENARIOS` in `pipeline/build.py` and rebuild.
+
 ## Data files (`downloads/`)
 
 | File | What it is |
