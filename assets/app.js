@@ -547,7 +547,8 @@
     const frag = document.createDocumentFragment();
     for (const r of rows) {
       const tr = el('tr', { tabindex: '0' });
-      if (isSelected(r.c.id)) tr.classList.add('is-selected');
+      const inChart = isSelected(r.c.id);
+      if (inChart) tr.classList.add('is-selected');
       const bar = el('td', { class: 'bar-col' });
       const track = el('div', { class: 'bar-track' });
       const fill = el('div', { class: 'bar-fill' });
@@ -562,11 +563,17 @@
       if (r.dr == null) dr.textContent = 'new';
       else if (r.dr === 0) dr.textContent = '0';
       else { dr.textContent = `${r.dr > 0 ? '▲' : '▼'} ${Math.abs(r.dr)}`; dr.classList.add(r.dr > 0 ? 'up' : 'down'); }
-      tr.append(el('td', { class: 'num' }, String(r.rank)), el('td', {}, r.name), el('td', { class: 'num' }, fmt(r.value)), bar, dv, dr);
+      const nameCell = el('td', { class: 'name-cell' });
+      const key = el('span', { class: 'row-key', 'aria-hidden': 'true' });
+      if (inChart) key.style.borderTopColor = colorOf(r.c.id);
+      nameCell.append(key, document.createTextNode(r.name));
+      if (inChart) nameCell.append(el('span', { class: 'sr-only' }, ' (in comparison chart)'));
+      tr.append(el('td', { class: 'num' }, String(r.rank)), nameCell, el('td', { class: 'num' }, fmt(r.value)), bar, dv, dr);
+      tr.title = inChart ? 'Already in the comparison chart' : 'Click to add to the comparison chart';
       const act = () => {
-        if (isSelected(r.c.id)) { removeCountry(r.c.id); toast(`Removed ${r.name} from the comparison`); }
-        else addCountry(r.c.id);
-        tr.classList.toggle('is-selected', isSelected(r.c.id));
+        if (isSelected(r.c.id)) { toast(`${r.name} is already in the comparison chart. Remove it with × on the Compare countries tab.`); return; }
+        addCountry(r.c.id);
+        renderRankings();
       };
       tr.addEventListener('click', act);
       tr.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); act(); } });
@@ -582,9 +589,9 @@
     const d = D(), k = state.index;
     const sel = $('#comp-country');
     const opts = d.countries.filter((c) => INPUTS.some((i) => c[i].some((v) => v != null)));
-    if (sel.dataset.vintage !== state.vintage) {
+    if (sel.dataset.key !== dataKey()) {
       sel.replaceChildren(...opts.map((c) => el('option', { value: c.id }, c.name)));
-      sel.dataset.vintage = state.vintage;
+      sel.dataset.key = dataKey();
     }
     if (!state.compCountry || !d.byId.has(state.compCountry)) {
       state.compCountry = state.selected[0]?.id ?? d.byCode.get('GBR')?.id ?? opts[0].id;
