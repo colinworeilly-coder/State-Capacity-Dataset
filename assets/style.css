@@ -279,3 +279,5 @@ th[aria-sort="descending"]::after { content: " ▼"; font-size: 0.6rem; }
 /* Alternative-assumption toggles in the control bar */
 .scenario-toggles { display: flex; flex-wrap: wrap; gap: 4px 14px; min-height: 36px; align-items: center; }
 .scenario-toggles .check { min-height: 0; }
+.name-cell { white-space: nowrap; }
+.row-key { display: inline-block; width: 14px; margin-right: 8px; vertical-align: middle; border-top: 2px solid transparent; border-radius: 2px; }
