@@ -41,6 +41,10 @@
         <button type="button" role="radio" data-index="c_comp" id="idx-comp">Comprehensive<span class="seg-sub">6 inputs</span></button>
       </div>
     </div>
+    <div class="field" id="scenario-field" hidden>
+      <span class="label">Alternative assumption</span>
+      <div class="scenario-toggles" id="scenario-toggles"></div>
+    </div>
     <p class="coverage" id="coverage" aria-live="polite"></p>
   </div>
   <nav class="wrap tabs" role="tablist" aria-label="Views">
@@ -193,6 +197,9 @@
     <h3>Updates to newer V-Dem releases</h3>
     <p>The original series is the published one, built on V-Dem v9 and ending in 2018. Each update applies the same fixed v9 loadings to a newer V-Dem release. The inputs are standardised on that release’s own sample, so each vintage has mean zero. Because V-Dem re-estimates its whole history with each release, an update revises earlier years slightly as well as adding new ones. Correlations with the original series on overlapping years are about 0.99. The download files also include <code>pca_*</code> columns that re-estimate the principal component on the newer data, for robustness checks.</p>
     <ul class="vintage-notes small" id="vintage-notes" hidden></ul>
+    <h3 id="assumptions">Alternative assumptions</h3>
+    <p>The control bar can switch on assumptions that fill gaps in the V-Dem data. Polities scored under an assumption are labelled “(assumed)” in every view. They are scored with the same loadings and standardisation constants as everyone else, so no other country’s score changes, although ranks below them shift. The official download files never include them; each assumption has its own file on the Download page.</p>
+    <ul class="small" id="scenario-list"></ul>
     <div class="table-wrap"><table class="stats" id="stats-table"></table></div>
     <p class="muted small">Summary statistics. Scores are principal-component scores and are not rescaled, so the standard deviation equals the square root of the first eigenvalue. The original rows reproduce Table 3 of the paper.</p>
 

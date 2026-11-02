@@ -35,6 +35,7 @@
     meta: null, data: {}, vintage: null, index: 'c_nar', selected: [], year: null, baseYear: 2000,
     range: 'all', band: true, view: 'explore', compCountry: null, compScale: 'raw',
     sort: { key: 'rank', dir: 1 }, filter: '', hoverYear: null,
+    raw: {}, scenarios: new Set(),
   };
 
   // ------------------------------------------------------------------ data
@@ -79,15 +80,33 @@
     return d;
   }
 
-  async function loadVintage(key) {
+  // Alternative assumptions add polities scored under that assumption. They are
+  // relabelled "(assumed)" everywhere and carry the scenario key.
+  const dataKey = () => [state.vintage, ...[...state.scenarios].sort()].join('|');
+  function ensureData() {
+    const key = dataKey();
     if (!state.data[key]) {
-      const r = await fetch(`data/${key}.json`);
-      if (!r.ok) throw new Error(`Could not load data/${key}.json (${r.status})`);
-      state.data[key] = prepare(await r.json());
+      const raw = state.raw[state.vintage];
+      const extra = [];
+      for (const sk of state.scenarios) {
+        for (const c of raw.scenarios?.[sk] || []) extra.push({ ...c, name: `${c.name} (assumed)`, baseName: c.name, scenario: sk });
+      }
+      const countries = [...raw.countries.filter((c) => !extra.some((e) => e.id === c.id)), ...extra]
+        .sort((a, b) => a.name.localeCompare(b.name));
+      state.data[key] = prepare({ ...raw, countries });
     }
     return state.data[key];
   }
-  const D = () => state.data[state.vintage];
+  async function loadVintage(key) {
+    if (!state.raw[key]) {
+      const r = await fetch(`data/${key}.json`);
+      if (!r.ok) throw new Error(`Could not load data/${key}.json (${r.status})`);
+      state.raw[key] = await r.json();
+    }
+    return ensureData();
+  }
+  const D = () => state.data[dataKey()];
+  const scenarioMeta = (k) => state.meta.scenarios.find((x) => x.key === k);
   const vintageMeta = () => state.meta.vintages.find((v) => v.key === state.vintage);
 
   function coverageFor(c, k) {
@@ -100,7 +119,7 @@
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        sel: state.selected.map((s) => s.id), index: state.index, vintage: state.vintage,
+        sel: state.selected.map((s) => s.id), index: state.index, vintage: state.vintage, scen: [...state.scenarios],
       }));
     } catch (e) { /* storage unavailable: ignore */ }
   }
@@ -165,7 +184,21 @@
     sel.value = state.vintage;
     for (const b of $$('#index-seg button')) b.setAttribute('aria-checked', String(b.dataset.index === state.index));
     const s = vintageMeta().summary[state.index];
-    $('#coverage').textContent = `${INDEX[state.index].name} (${state.index}) · ${s.first_year}–${s.last_year} · ${fmtInt(s.N)} country-years · ${s.n} polities`;
+    const extra = [...state.scenarios].map((k) => scenarioMeta(k).code);
+    $('#coverage').textContent = `${INDEX[state.index].name} (${state.index}) · ${s.first_year}–${s.last_year} · ${fmtInt(s.N)} country-years · ${s.n} polities`
+      + (extra.length ? ` · plus ${D().countries.filter((c) => c.scenario).map((c) => c.baseName).join(', ')} under an assumption` : '');
+    const box = $('#scenario-toggles');
+    if (!box.childElementCount) {
+      for (const sc of state.meta.scenarios) {
+        const lab = el('label', { class: 'check', title: sc.description });
+        const cb = el('input', { type: 'checkbox', id: `scn-${sc.key}` });
+        cb.addEventListener('change', () => setScenario(sc.key, cb.checked));
+        lab.append(cb, document.createTextNode(sc.short));
+        box.append(lab);
+      }
+      $('#scenario-field').hidden = !state.meta.scenarios.length;
+    }
+    for (const sc of state.meta.scenarios) $(`#scn-${sc.key}`).checked = state.scenarios.has(sc.key);
     $('#eyebrow').textContent = `Panel dataset · 1789–${D().last.c_nar} · ${D().countries.length} polities`;
     for (const a of $$('.tabs a')) a.setAttribute('aria-selected', String(a.dataset.view === state.view));
     for (const v of VIEWS) $(`#view-${v}`).hidden = v !== state.view;
@@ -348,10 +381,10 @@
 
   function downloadView() {
     const d = D(), k = state.index, [x0, x1] = xDomain();
-    const rows = [['country_name', 'country_text_id', 'country_id', 'year', k]];
+    const rows = [['country_name', 'country_text_id', 'country_id', 'year', k, 'assumption']];
     for (const s of state.selected) {
       const c = d.byId.get(s.id);
-      for (let yr = x0; yr <= x1; yr++) { const v = val(c, k, yr); if (v != null) rows.push([c.name, c.code, c.id, yr, v]); }
+      for (let yr = x0; yr <= x1; yr++) { const v = val(c, k, yr); if (v != null) rows.push([c.baseName || c.name, c.code, c.id, yr, v, c.scenario || '']); }
     }
     const csv = rows.map((r) => r.map((v) => (/[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v)).join(',')).join('\n');
     const a = el('a', { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), download: `statecap_${k}_${state.vintage}_selection.csv` });
@@ -392,7 +425,7 @@
     await loadWorld();
     const box = $('#map-chart');
     const W = Math.max(300, box.clientWidth || 900);
-    const key = `${W}|${state.vintage}`;
+    const key = `${W}|${dataKey()}`;
     if (!mapCache || mapCache.key !== key) {
       const proj = d3.geoEqualEarth().fitWidth(W, { type: 'FeatureCollection', features: world });
       const path = d3.geoPath(proj);
@@ -540,7 +573,8 @@
       frag.append(tr);
     }
     tb.replaceChildren(frag);
-    $('#rank-note').textContent = `${cur.rows.length} polities scored in ${state.year}; ${base.rows.length} in ${state.baseYear}. Rank change compares positions in the two years' full rankings ("new" means no score in ${state.baseYear}). Differences of a few hundredths are within the measurement error of the V-Dem inputs.`;
+    $('#rank-note').textContent = `${cur.rows.length} polities scored in ${state.year}; ${base.rows.length} in ${state.baseYear}. Rank change compares positions in the two years' full rankings ("new" means no score in ${state.baseYear}). Differences of a few hundredths are within the measurement error of the V-Dem inputs.`
+      + (D().countries.some((c) => c.scenario) ? ' Rows marked "(assumed)" are scored under an alternative assumption; adding them shifts the ranks below them but no other score.' : '');
   }
 
   // ----------------------------------------------------------- components
@@ -575,7 +609,8 @@
         const bar = el('i'); bar.style.width = `${(L.loadings[li] / maxW) * 40}px`;
         wt.append(bar, document.createTextNode(`weight ${L.loadings[li].toFixed(3)}`));
       } else wt.textContent = `not in ${k}`;
-      meta.append(el('span', {}, inp), wt);
+      const sc = c.scenario && scenarioMeta(c.scenario);
+      meta.append(el('span', {}, sc && sc.var === inp ? `${inp} · assumed ${sc.value}` : inp), wt);
       card.append(meta);
       const chart = el('div', { class: 'chart' });
       card.append(chart);
@@ -650,6 +685,20 @@
       box.append(dlCard('Archive', `Earlier update (V-Dem v${a.vdem})`,
         'Previously released update, kept so earlier work can be reproduced exactly.' + (a.note ? ' ' + a.note : ''), a.file, a.sizes));
     }
+    for (const sc of state.meta.scenarios) {
+      const card = el('div', { class: 'dl-card' });
+      card.append(el('span', { class: 'tag' }, 'Alternative assumption'), el('h3', {}, sc.label), el('p', {}, sc.description));
+      const links = el('div', { class: 'dl-links' });
+      for (const v of state.meta.vintages) {
+        const f = v.scenarios?.[sc.key];
+        if (!f) continue;
+        const a = el('a', { href: `downloads/${f.file}.csv`, download: '' });
+        a.append(document.createTextNode(`CSV · ${v.short}`), el('span', {}, fmtSize(f.size)));
+        links.append(a);
+      }
+      card.append(links);
+      box.append(card);
+    }
     const tb = $('#codebook tbody');
     for (const [k, v] of Object.entries(state.meta.labels)) {
       const tr = el('tr');
@@ -697,6 +746,12 @@
           stt.tBodies[0].append(r);
         }
       }
+      const sl = $('#scenario-list');
+      for (const sc of state.meta.scenarios) {
+        const li = el('li');
+        li.append(el('strong', {}, `${sc.label}. `), document.createTextNode(sc.description));
+        sl.append(li);
+      }
       const notes = $('#vintage-notes');
       for (const v of [...state.meta.vintages, ...state.meta.archive]) {
         if (v.note) notes.append(el('li', {}, `V-Dem v${v.vdem}: ${v.note}`));
@@ -742,6 +797,21 @@
     if (target) target.scrollIntoView({ block: 'start' });
   }
 
+  function setScenario(key, on) {
+    if (on) state.scenarios.add(key); else state.scenarios.delete(key);
+    ensureData();
+    mapCache = null;
+    const sc = scenarioMeta(key);
+    const added = D().countries.find((c) => c.scenario === key);
+    state.selected = state.selected.filter((s) => D().byId.has(s.id));
+    if (on && added) {
+      if (!isSelected(added.id) && state.selected.length < MAX_SEL) addCountry(added.id, true);
+      toast(`Showing ${added.baseName} with ${sc.var} = ${sc.value} (assumption). Other countries are unchanged.`);
+    } else if (!on) toast(`Assumption off: ${sc.short}`);
+    save();
+    renderView();
+  }
+
   // ------------------------------------------------------------------ init
   function bind() {
     $('#vintage').addEventListener('change', async (e) => {
@@ -749,7 +819,9 @@
       state.vintage = e.target.value;
       await loadVintage(state.vintage);
       mapCache = null;
+      const prev = new Set(state.selected.map((s) => s.id));
       state.selected = state.selected.filter((s) => D().byId.has(s.id));
+      if (state.selected.length < prev.size) toast('Some selected countries have no data in this vintage and were removed.');
       if (wasLatest || state.year > D().last[state.index]) setYear(D().last[state.index]);
       save();
       renderView();
@@ -827,6 +899,8 @@
       const keys = state.meta.vintages.map((v) => v.key);
       state.vintage = saved && keys.includes(saved.vintage) ? saved.vintage : keys[0];
       if (saved && INDEX[saved.index]) state.index = saved.index;
+      for (const k of saved?.scen || []) if (state.meta.scenarios?.some((x) => x.key === k)) state.scenarios.add(k);
+      state.meta.scenarios = state.meta.scenarios || [];
       await loadVintage(state.vintage);
       const ids = saved?.sel?.length ? saved.sel : DEFAULT_CODES.map((c) => D().byCode.get(c)?.id);
       for (const id of ids) if (id != null) addCountry(id, true);
